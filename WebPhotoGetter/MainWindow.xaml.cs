@@ -40,6 +40,7 @@ namespace WebPhotoGetter
         Stopwatch stopwatch = new Stopwatch();
 
         bool renamephotos = false;
+        bool showdetails = false;
         string TheUriRightNow = "";
         string NowPath = "";
         int TheName = 0;
@@ -50,17 +51,22 @@ namespace WebPhotoGetter
 
             CtrlThePhotoViewer.Width = new GridLength(0);
             dlg.IsFolderPicker = true;
+
             PrintOut.Text += "\n\nDevelop By Earzu Chan 2022. All copyrights. \n\nHow To Use?\nFirst, type your uri that you wanna get photo into the Uri TextBox. \nSecond, Click the button Load, after the Page was loaded in the Browser under the interface, to scroll the Page to make sure all the photos you wanna get is loaded. \nThird, just click the button Get. After a while, all the photos that can be got was viewed in the ListBox up the interface. \nFouth, click the photos you wanna download, and click the button Download( If you wanna rename them all, click the Box Rename Photos), after a while, photos are downloaded. ";
 
-            renamephotos = true;//以后加入复选框
+            renamephotos = true;
+            RenameBox.IsChecked = renamephotos;
+            SDB.IsChecked = showdetails;
 
         }
+
         private void printMy(string str)
         {
             PrintOut.Text += str + "\n\n";
 
             PrintOut.ScrollToEnd();
         }
+
         private void addPhoto(string url, int num)
         {
             var pic = new BitmapImage(new Uri(url));
@@ -68,7 +74,10 @@ namespace WebPhotoGetter
             aArray = aArray[aArray.Length - 1].Split('.');
             string type = "webp";
             string nam = "Untitled";
-
+            if (aArray[aArray.Length - 1].Contains('?')) {
+                aArray[aArray.Length - 1] = aArray[aArray.Length - 1].Substring(0, aArray[aArray.Length - 1].IndexOf('?'));
+                //printMy($"搞这种扩展名修复太润，{aArray[aArray.Length - 1]}");
+            }
             if (aArray[aArray.Length - 1].Length <= 4)
             {
                 type = aArray[aArray.Length - 1];
@@ -76,13 +85,20 @@ namespace WebPhotoGetter
             }
             else
             {
-                nam = aArray[aArray.Length - 1] + ".As_A_Webp";
+                nam = aArray[aArray.Length - 1] + "(Load As A Webp)";
             }
-
-            printMy($"--->File Type: {type}\nFile Name: {nam}<---");
+            if (showdetails)
+            {
+                printMy($"File Type: {type}\nFile Name: {nam}   <---");
+            }
+            else
+            {
+                printMy($"A {type} File.  <---");
+            }
             LVDatas.Add(new LVData { Name = num.ToString(), Pic = pic, OriFileUri = url, OriFileName = nam, Type = type });
             MyList.ItemsSource = LVDatas;
         }
+
         private void PathButton_Click(object sender, RoutedEventArgs e)
         {
             if (dlg.ShowDialog() == CommonFileDialogResult.Ok)
@@ -90,6 +106,7 @@ namespace WebPhotoGetter
                 PathBox.Text = dlg.FileName;
             }
         }
+
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(UrlBox.Text)) return;
@@ -99,21 +116,23 @@ namespace WebPhotoGetter
 
             TheName = 100;
 
-            printMy($"--->\nGetting Load With: \n{TheUriRightNow}\n<---");
+            printMy($"--->  Getting Load With: \n{TheUriRightNow}  <---");
             WebView.Source = new Uri(TheUriRightNow);
         }
+
         private void clearList()
         {
             PrintOut.Text = "";
 
             LVDatas = new ObservableCollection<LVData>();
         }
+
         private async void GetButton_Click(object sender, RoutedEventArgs e)
         {
 
             clearList();
 
-            printMy("--->\nGot Started\n<---");
+            printMy("--->  Got Started  <---");
             stopwatch.Start();
 
             object obj = await WebView.CoreWebView2.ExecuteScriptAsync("document.documentElement.outerHTML;");//jquery获取页面内容
@@ -122,13 +141,14 @@ namespace WebPhotoGetter
             HtmlText = Regex.Unescape(HtmlText);
             HtmlText = HtmlText.AsSpan()[1..^1].ToString();
 
-            getPhotosNextStep(HtmlText, TheName);
+            getPhotosNextStep(HtmlText);
         }
-        private void getPhotosNextStep(string str, int name)
+
+        private void getPhotosNextStep(string str)
         {
             if (string.IsNullOrEmpty(str.Trim()))
             {
-                printMy("--->\nGot Failed: \nGot the WebPage file error. \n<---");
+                printMy("--->  Got Failed: \nGot the WebPage file error.  <---");
                 return;
             }
 
@@ -146,20 +166,33 @@ namespace WebPhotoGetter
 
                     alltemp++;
 
-                    if (src.StartsWith(@"//")) src = "http://" + src.Substring(2);
+                    if (src.StartsWith(@"//")) src = string.Concat("http://", src.AsSpan(2));
 
                     if (src.StartsWith("http"))
                     {
                         temp++;
-                        printMy("The Normal PhotoUrl: \n" + src);
+
+                        if (showdetails)
+                        {
+                            printMy("--->  No." + temp + " . The Normal Photo. \nUrl:  " + src);
+                        }
+                        else
+                        {
+                            printMy($"---> A Normal Photo. No.{temp}");
+                        }
 
                         addPhoto(src, temp);
-                        name++;
-                        printMy("It can be got normally. \n");
                     }
                     else
                     {
-                        printMy("The Special Photo: \n" + src + "\n\nWhich can't be viewed right now, maybe is anthor's knowledge too few. ");
+                        if (showdetails)
+                        {
+                            printMy("--->  The Special Photo: \n" + src + "\n\nWhich can't be viewed right now, maybe is anthor's knowledge too few.  <---");
+                        }
+                        else
+                        {
+                            printMy("---> A Special Photo  <---");
+                        }
                     }
                 }
             }
@@ -172,19 +205,20 @@ namespace WebPhotoGetter
             printMy("There's about " + alltemp + " Photo files, and got " + temp + " successfully.");
             printMy("Time: " + stopwatch.ElapsedMilliseconds / 1000 + " Second(s). \n<---");
         }
+
         private void DSB_Click(object sender, RoutedEventArgs e)
         {
             if (MyList.SelectedItem != null)
             {
                 if (string.IsNullOrEmpty(NowPath))
                 {
-                    printMy("--->\nFile Written Path is Empty\n<---");
+                    printMy("--->  File Written Path is Empty  <---");
                     return;
                 }
                 PathBox.IsReadOnly = true;
                 int seconds = 0;
 
-                printMy("--->\nStart Writting File(s). \n<---");
+                printMy("--->  Start Writting File(s).  <---");
                 WebClient client = new WebClient();
                 foreach (object obj in MyList.SelectedItems)
                 {
@@ -192,8 +226,8 @@ namespace WebPhotoGetter
                     seconds++;
 
                     string filename = "";
-
-                    if (renamephotos)
+                    //printMy($"Rename? {renamephotos}");
+                    if (renamephotos == true)
                     {
                         filename = seconds.ToString();
                     }
@@ -209,27 +243,36 @@ namespace WebPhotoGetter
                     filename = NowPath + "\\" + filename + "." + item.Type;
 
                     client.DownloadFile(item.OriFileUri, filename);
-
-                    printMy("Writting the " + seconds + " file: \n" + item.OriFileName + "." + item.Type);
+                    if (showdetails == true)
+                    {
+                        printMy("--->  Writting the " + seconds + "\nFile:\nOrinName: " + item.OriFileName + "." + item.Type + "\nSave Name: " + filename + "  <---");
+                    }
+                    else
+                    {
+                        printMy($"--->  Writting the {seconds}  File.  <---");
+                    }
 
                 }
-                printMy("--->\nFile(s) Written. \n<---");
+                printMy("--->  File(s) Written.  <---");
                 PathBox.IsReadOnly = false;
             }
             else
             {
-                printMy("Nothing selected. ");
+                printMy("--->  Nothing selected.  <---");
             }
 
         }
+
         private void WebView_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
         {
-            printMy("--->\nGot Loaded: \nNow you can scroll the WebPage until all the photos were got ready. \n\nNow you can select and download the Photo(s) you like, but remember to select the Photo(s) in order. \n<---");
+            printMy("--->  Got Loaded: \nNow you can scroll the WebPage until all the photos were got ready. \n\nNow you can select and download the Photo(s) you like, but remember to select the Photo(s) in order.  <---");
         }
+
         private void MyList_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
 
         }
+
         private void MyList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (MyList.SelectedItem != null)
@@ -251,6 +294,30 @@ namespace WebPhotoGetter
         private void PathBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             NowPath = PathBox.Text;
+        }
+
+        private void RenameBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (RenameBox.IsChecked == true)
+            {
+                renamephotos = true;
+            }
+            else
+            {
+                renamephotos = false;
+            }
+        }
+
+        private void SDB_Click(object sender, RoutedEventArgs e)
+        {
+            if (SDB.IsChecked == true)
+            {
+                showdetails = true;
+            }
+            else
+            {
+                showdetails = false;
+            }
         }
     }
 }

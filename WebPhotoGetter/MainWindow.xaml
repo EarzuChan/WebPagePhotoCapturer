@@ -22,10 +22,10 @@
             </Grid.ColumnDefinitions>
             <Grid ShowGridLines="True">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="80*"></RowDefinition>
-                    <RowDefinition Height="10*"></RowDefinition>
-                    <RowDefinition Height="10*"></RowDefinition>
-                    <RowDefinition Height="10*"></RowDefinition>
+                    <RowDefinition Height="76*"></RowDefinition>
+                    <RowDefinition Height="8*"></RowDefinition>
+                    <RowDefinition Height="8*"></RowDefinition>
+                    <RowDefinition Height="8*"></RowDefinition>
                 </Grid.RowDefinitions>
                          <ListBox Grid.Row="0" Grid.Column="0" x:Name="MyList" Background ="Transparent" ItemsSource="{Binding}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" SelectionMode="Multiple"  ToolTip="Double Click to get view. " SelectionChanged="MyList_SelectionChanged">
                 <ListBox.ItemsPanel>
@@ -46,7 +46,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" ShowGridLines="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="80*"/>
                         <ColumnDefinition Width="20*"/>
@@ -74,10 +74,10 @@
                     </TextBox>
                     <Button Grid.Row="0" Grid.Column="2" x:Name="LoadButton" Content="Load" HorizontalAlignment="Stretch" Click="LoadButton_Click" Grid.ColumnSpan="1"/>
                 </Grid>
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="2" ShowGridLines="True">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="65*"/>
-                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="70*"/>
+                        <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="PathBox" Grid.Row="0" Grid.Column="0"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" TextChanged="PathBox_TextChanged">
@@ -106,13 +106,17 @@
                     <Button Grid.Row="0" Grid.Column="1" x:Name="PathButton" Content="..." HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="PathButton_Click" RenderTransformOrigin="0.392,0.563"/>
                     <Button Grid.Row="0"  Grid.Column="2" Name="Getit" Content="Get" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="GetButton_Click"/>
                 </Grid>
-                <Grid Grid.Row="3">
+                <Grid Grid.Row="3" ShowGridLines="True">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="25*"/>
                         <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="25*"/>
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="DSB" Grid.Column="2" Content="Download" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="DSB_Click"/>
+                    
+                    <Button x:Name="DSB" Grid.Column="3" Content="Download" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="DSB_Click"/>
+                    <CheckBox x:Name="RenameBox" Grid.Column="1" Content="Rename Photo(s) to Id" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="RenameBox_Click"/>
+                    <CheckBox x:Name="SDB" Grid.Column="0" Content="Show Details" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="SDB_Click"/>
 
                 </Grid>
                 
