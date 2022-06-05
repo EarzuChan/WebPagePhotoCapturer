@@ -1,0 +1,133 @@
+﻿<Window x:Class="WebPhotoGetter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WebPhotoGetter"
+        mc:Ignorable="d"
+        Title="MainWindow" d:DesignHeight="860" d:DesignWidth="870">
+    <Grid ShowGridLines="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200*"></RowDefinition>
+            <RowDefinition Height="100*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid ShowGridLines="True" Grid.Row="0" >
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300*"></ColumnDefinition>
+                <ColumnDefinition Width="150*"/>
+            </Grid.ColumnDefinitions>
+            <Grid ShowGridLines="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80*"></RowDefinition>
+                    <RowDefinition Height="10*"></RowDefinition>
+                    <RowDefinition Height="10*"></RowDefinition>
+                    <RowDefinition Height="10*"></RowDefinition>
+                </Grid.RowDefinitions>
+                         <ListBox Grid.Row="0" Grid.Column="0" x:Name="MyList" Background ="Transparent" ItemsSource="{Binding}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" SelectionMode="Multiple"  ToolTip="Double Click to get view. " SelectionChanged="MyList_SelectionChanged">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="10" Width="100" Height="120">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" ></RowDefinition>
+                                <RowDefinition Height="Auto" ></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Image Source="{Binding Pic}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="100"/>
+                            <TextBlock Text="{Binding Name}" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="20"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Row="0" x:Name="UrlBox"  HorizontalAlignment="Stretch"  Text="" VerticalAlignment="Stretch">
+                        <TextBox.Resources>
+                            <VisualBrush x:Key="HelpBrush" TileMode="None" Opacity="0.3" Stretch="None" AlignmentX="Left">
+                                <VisualBrush.Visual>
+                                    <TextBlock FontStyle="Italic" Text="  Your Page's Uri"/>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </TextBox.Resources>
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource HelpBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background" Value="{StaticResource HelpBrush}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <Button Grid.Row="0" Grid.Column="2" x:Name="LoadButton" Content="Load" HorizontalAlignment="Stretch" Click="LoadButton_Click" Grid.ColumnSpan="1"/>
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="65*"/>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="PathBox" Grid.Row="0" Grid.Column="0"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" TextChanged="PathBox_TextChanged">
+                        <TextBox.Resources>
+                            <VisualBrush x:Key="HelpBrush" TileMode="None" Opacity="0.3" Stretch="None" AlignmentX="Left">
+                                <VisualBrush.Visual>
+                                    <TextBlock FontStyle="Italic" Text="  Save Photos' Folder Path"/>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </TextBox.Resources>
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource HelpBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background" Value="{StaticResource HelpBrush}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+
+
+                    <Button Grid.Row="0" Grid.Column="1" x:Name="PathButton" Content="..." HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="PathButton_Click" RenderTransformOrigin="0.392,0.563"/>
+                    <Button Grid.Row="0"  Grid.Column="2" Name="Getit" Content="Get" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="GetButton_Click"/>
+                </Grid>
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="DSB" Grid.Column="2" Content="Download" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="DSB_Click"/>
+
+                </Grid>
+                
+            </Grid>
+             <TextBox Grid.Row="0"  Grid.Column="1"  x:Name="PrintOut" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="Text will be printed here. " VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" IsReadOnly="True"/>
+        </Grid>
+        <Grid ShowGridLines="True" Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300*"></ColumnDefinition>
+                <ColumnDefinition Name="CtrlThePhotoViewer" Width="150*"/>
+            </Grid.ColumnDefinitions>
+        <wv2:WebView2 Grid.Row="0" Grid.Column="0" x:Name="WebView" Visibility="Visible" NavigationCompleted="WebView_NavigationCompleted" />
+            <Image x:Name="PhotoViewer" Grid.Column="1" HorizontalAlignment="Stretch"></Image>
+        </Grid>
+
+    </Grid>
+</Window>
